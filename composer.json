@@ -1,0 +1,15 @@
+{
+  "name": "dfsmirnov/graph_theory",
+  "description": "Graph theory course code",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Dmitry Smirnov",
+      "email": "dfs@dfsmrinov.ru"
+    }
+  ],
+  "require": {
+    "phpunit/phpunit": "5.7.27"
+  }
+}

@@ -3,12 +3,54 @@
 //Найдите эйлеров цикл в графе.
 //
 //Формат входных данных:
-//В первой строке указаны два числа разделенных пробелом: v (число вершин) и e (число ребер). В следующих e строках указаны пары вершин, соединенных ребром. Выполняются ограничения: 2≤v≤1000,0≤e≤1000 .
+//В первой строке указаны два числа разделенных пробелом: v (число вершин) и e (число ребер).
+// В следующих e строках указаны пары вершин, соединенных ребром.
+// Выполняются ограничения: 2≤v≤1000,0≤e≤1000 .
 //
 //Формат выходных данных:
 //Одно слово: NONE, если в графе нет эйлерова цикла, или список вершин в порядке обхода эйлерова цикла, если он есть.
 //
 ini_set("auto_detect_line_endings", true);
+
+class FindEulerCycle
+{
+
+
+
+    /**
+     * @param Graph $graph
+     * @return array|bool
+     */
+    public function findIt(Graph $graph)
+    {
+
+        // Первое - проверим что у нас всего одна компонента связанности
+        $ds = new DeepSearchForNKS();
+        $nks = $ds->doSearch($graph);
+
+        if ($nks != 1) {
+            return false;
+        }
+
+        // Второе - проверим что у всех вершин степень четная
+        $arIxs = $graph->getVerticesItemIndexes();
+        foreach ($arIxs as $iVertex) {
+            $vertex = $graph->getVertex($iVertex);
+            $arAdj = $vertex->getAdjecentIndexes();
+            if (count($arAdj) % 2 > 0) {
+                return false;
+            }
+        }
+
+        // теперь ищем сам цикл
+        $resultGraph = new Graph();
+
+
+        return array();
+
+    }
+
+}
 
 class DeepSearchForNKS
 {
@@ -18,9 +60,13 @@ class DeepSearchForNKS
     private $graph;
     private $nKS;
 
-    public function doSearch()
+    /**
+     * @param Graph $graph
+     * @return int
+     */
+    public function doSearch(Graph $graph)
     {
-        $this->graph = GraphConsoleReader::readGraph();
+        $this->graph = $graph;
         $this->nKS = 0;
         $arIxs = $this->graph->getVerticesItemIndexes();
         foreach ($arIxs as $iVertex) {
@@ -106,6 +152,7 @@ class VertexWithEdges
 
 /**
  * Class Graph
+ * эта реализация не поддерживает мультиребра!
  */
 class Graph
 {
@@ -205,13 +252,13 @@ class Graph
  */
 class GraphConsoleReader
 {
-
     /**
      * @throws Exception
+     * @return Graph
      */
-    public static function readGraph()
+    public static function readGraph($sFileName = 'php://stdin')
     {
-        $fh = fopen('php://stdin', 'r') or die($php_errormsg);
+        $fh = fopen($sFileName, 'r') or die($php_errormsg);
         $sFirstLine = fgets($fh);
         $sFirstLine = trim(preg_replace('/\s\s+/', '', $sFirstLine));
         $arFirstLine = explode(' ', $sFirstLine);
@@ -247,5 +294,4 @@ class GraphConsoleReader
 
 }
 
-$ds = new DeepSearchForNKS();
-echo $ds->doSearch();
+
