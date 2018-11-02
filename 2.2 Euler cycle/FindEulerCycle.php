@@ -12,9 +12,16 @@
 //
 ini_set("auto_detect_line_endings", true);
 
+/**
+ * Class FindEulerCycle
+ */
 class FindEulerCycle
 {
 
+    /**
+     * @var Graph $graph
+     */
+    private $graph;
 
 
     /**
@@ -36,22 +43,38 @@ class FindEulerCycle
         $arIxs = $graph->getVerticesItemIndexes();
         foreach ($arIxs as $iVertex) {
             $vertex = $graph->getVertex($iVertex);
-            $arAdj = $vertex->getAdjecentIndexes();
-            if (count($arAdj) % 2 > 0) {
+            $arAdjIndexes = $vertex->getAdjecentIndexes();
+            if (count($arAdjIndexes) % 2 > 0) {
                 return false;
             }
         }
 
         // теперь ищем сам цикл
-        $resultGraph = new Graph();
+        $this->graph = $graph;
+        $way = new Way();
+
 
 
         return array();
 
     }
 
+    private function getVertexWithNotBypassedRibs(){
+        $arIxs = $this->graph->getVerticesItemIndexes();
+        foreach ($arIxs as $iVertex) {
+            $vertex = $this->graph->getVertex($iVertex);
+            $arAdjIndexes = $vertex->getAdjecentIndexes();
+            foreach($arAdjIndexes as $index){
+                if ($vertex->isHasTag())
+            }
+        }
+    }
+
 }
 
+/**
+ * Class DeepSearchForNKS
+ */
 class DeepSearchForNKS
 {
     /**
@@ -95,6 +118,23 @@ class DeepSearchForNKS
         }
     }
 
+}
+
+class Way
+{
+    private $way;
+    public function __construct()
+    {
+        $way = array();
+    }
+
+    public function addStep($nextVertax){
+
+    }
+
+    public function insertWay(Way $anotherWay){
+
+    }
 }
 
 /**
@@ -256,6 +296,14 @@ class GraphConsoleReader
      * @throws Exception
      * @return Graph
      */
+    /**
+     * @param string $sFileName
+     *  - php://stdin - читает с консоли
+     *  - data://text/plain...  - читает из строки ...
+     *  - filename - читает из файла
+     * @return Graph
+     * @throws Exception
+     */
     public static function readGraph($sFileName = 'php://stdin')
     {
         $fh = fopen($sFileName, 'r') or die($php_errormsg);
@@ -267,8 +315,6 @@ class GraphConsoleReader
         }
         $nVertex = $arFirstLine[0];
         $nEdges = $arFirstLine[1];
-//        echo $nVertex . "\n";
-//        echo $nEdges . "\n";
         $graph = new Graph($nVertex);
         for ($i = 0; $i < $nEdges; $i++) {
             $sLine = fgets($fh);
@@ -277,7 +323,6 @@ class GraphConsoleReader
             if (count($arLine) != 2) {
                 throw new Exception("Invalid format of line with edge: needed index_of_first_vertex index_of_second_vertex");
             }
-//            echo $arLine[0] . '->' . $arLine[1];
             $Vertex1 = $graph->getVertex($arLine[0]);
             $Vertex2 = $graph->getVertex($arLine[1]);
             if (!$Vertex1) {
